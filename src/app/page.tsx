@@ -70,50 +70,56 @@ export default function Home() {
 
         {/* Grouped Expense List */}
         {Object.keys(groupedByDate).length === 0 ? (
-          <p className="text-center text-gray-400">No expenses yet.</p>
-        ) : (
-          Object.entries(groupedByDate).map(([date, exps]) => {
-            const copyText = `${date}\n` + exps.map((exp) =>
-              `• ₹${exp.amount} ${exp.note || exp.category}`
+  <p className="text-center text-gray-400">No expenses yet.</p>
+) : (
+  <div className="mb-6 p-4 bg-yellow-50 rounded-md relative">
+    {/* One Copy Button for entire filtered range */}
+    <button
+      onClick={() => {
+        const combined = Object.entries(groupedByDate)
+          .map(([date, exps]) => {
+            const lines = exps.map(
+              (exp) => `• ₹${exp.amount} ${exp.note || exp.category}`
             ).join('\n');
-          
-            return (
-              <div key={date} className="mb-6 p-4 bg-yellow-50 rounded-md relative">
-                <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
-                <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(copyText);
-                      setCopiedDate(date);
-                      setTimeout(() => setCopiedDate(null), 2000);
-                    }}
-                    className="absolute top-4 right-4 text-sm text-blue-600 hover:text-blue-800 transition-transform active:scale-90"
-                    title="Copy to clipboard"
-                  >
-                    {copiedDate === date ? (
-                      <div className="flex items-center gap-1 text-green-600">
-                        <Check size={16} /> Copied!
-                      </div>
-                    ) : (
-                      <Clipboard size={16} />
-                    )}
-                  </button>
-
-                <ul className="space-y-3">
-                  {exps.map((exp) => (
-                    <li key={exp.id} className="p-3 bg-gray-100 rounded-md">
-                      <div className="font-medium">₹{exp.amount}</div>
-                      <div className="text-sm text-gray-600">{exp.category}</div>
-                      {exp.note && (
-                        <div className="text-xs text-gray-500 mt-1">{exp.note}</div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
+            return `${date}\n${lines}`;
           })
-          
-        )}
+          .join('\n\n');
+
+        navigator.clipboard.writeText(combined);
+        setCopiedDate('ALL');
+        setTimeout(() => setCopiedDate(null), 2000);
+      }}
+      className="absolute top-4 right-4 text-sm text-blue-600 hover:text-blue-800 transition-transform active:scale-90"
+    >
+      {copiedDate === 'ALL' ? (
+        <div className="flex items-center gap-1 text-green-600">
+          <Check size={16} /> Copied!
+        </div>
+      ) : (
+        <Clipboard size={16} />
+      )}
+    </button>
+
+    {/* All grouped expenses shown below */}
+    {Object.entries(groupedByDate).map(([date, exps]) => (
+      <div key={date} className="mb-4">
+        <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
+        <ul className="space-y-3">
+          {exps.map((exp) => (
+            <li key={exp.id} className="p-3 bg-gray-100 rounded-md">
+              <div className="font-medium">₹{exp.amount}</div>
+              <div className="text-sm text-gray-600">{exp.category}</div>
+              {exp.note && (
+                <div className="text-xs text-gray-500 mt-1">{exp.note}</div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+)}
+
       </section>
 
       {/* Floating Add Button */}
