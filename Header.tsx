@@ -1,8 +1,4 @@
-type HeaderProps = {
-    // total: number;
-  };
-  
-  export default function Header(/*{ total }: HeaderProps*/) {
+export default function Header() {
     return (
       <header className="p-4 bg-white shadow-md sticky top-0 z-10">
         <h1 className="text-2xl font-bold tracking-tight">SpentIt 💸</h1>
