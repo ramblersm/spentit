@@ -52,6 +52,15 @@ export default function Home() {
   }, {});
 
   const startListening = () => {
+    const isSupported =
+        typeof window !== 'undefined' &&
+        ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
+      if (!isSupported) {
+        alert("Voice input isn’t supported on this device yet. Works best on Chrome/Android.");
+        return;
+      }
+
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       alert('Speech recognition is not supported in your browser.');
       return;
