@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col min-h-screen bg-white text-gray-900">
-      <Header total={totalInRange} />
+      <Header />
 
       <section className="p-4">
         {/* Date Filters */}
