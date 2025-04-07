@@ -1,7 +1,9 @@
 'use client';
-import { Clipboard, Check } from 'lucide-react';
+
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
+import { Mic, MicOff } from 'lucide-react';
+import * as chrono from 'chrono-node';
 
 type Expense = {
   id: string;
@@ -10,12 +12,22 @@ type Expense = {
   note?: string;
   date: string;
 };
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 
 export default function Home() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+
+  const [listening, setListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [voiceExpense, setVoiceExpense] = useState<Partial<Expense>>({});
   const [copiedDate, setCopiedDate] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,12 +51,75 @@ export default function Home() {
     return acc;
   }, {});
 
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert('Speech recognition is not supported in your browser.');
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+    setListening(true);
+
+    recognition.onresult = (event: any) => {
+      const result = event.results[0][0].transcript;
+      setTranscript(result);
+      parseVoiceText(result);
+      setListening(false);
+    };
+
+    recognition.onerror = () => setListening(false);
+  };
+
+  const parseVoiceText = (text: string) => {
+    const words = text.toLowerCase().split(' ');
+    const amount = parseFloat(words.find((w) => !isNaN(Number(w))) || '0');
+    const category = words.find(
+      (w) => isNaN(Number(w)) && !['for', 'today'].includes(w)
+    ) || 'misc';
+
+    const parsedDate = chrono.parseDate(text, new Date(), { forwardDate: true });
+    const date = parsedDate ? parsedDate : new Date();
+
+    setVoiceExpense({
+      amount,
+      category,
+      date: date.toISOString().split('T')[0],
+    });
+  };
+
+  const confirmVoiceExpense = () => {
+    if (!voiceExpense.amount || !voiceExpense.date || !voiceExpense.category) return;
+
+    const newExp: Expense = {
+      id: crypto.randomUUID(),
+      amount: voiceExpense.amount,
+      category: voiceExpense.category,
+      note: '',
+      date: voiceExpense.date,
+    };
+
+    const updated = [...expenses, newExp];
+    setExpenses(updated);
+    localStorage.setItem('expenses', JSON.stringify(updated));
+    const audio = new Audio('/sounds/success.wav');
+    audio.play();
+
+    setTranscript('');
+    setVoiceExpense({});
+  };
+
   return (
     <main className="flex flex-col min-h-screen bg-white text-gray-900">
       <Header />
 
       <section className="p-4">
-        {/* Date Filters */}
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
             type="date"
@@ -60,7 +135,6 @@ export default function Home() {
           />
         </div>
 
-        {/* Range Summary */}
         {startDate && endDate && (
           <div className="mb-4 text-sm text-gray-700">
             Showing expenses from <strong>{startDate}</strong> to <strong>{endDate}</strong>
@@ -68,58 +142,90 @@ export default function Home() {
           </div>
         )}
 
-        {/* Grouped Expense List */}
         {Object.keys(groupedByDate).length === 0 ? (
-  <p className="text-center text-gray-400">No expenses yet.</p>
-) : (
-  <div className="mb-6 p-4 bg-yellow-50 rounded-md relative">
-    {/* One Copy Button for entire filtered range */}
-    <button
-      onClick={() => {
-        const combined = Object.entries(groupedByDate)
-          .map(([date, exps]) => {
-            const lines = exps.map(
-              (exp) => `• ₹${exp.amount} ${exp.note || exp.category}`
-            ).join('\n');
-            return `${date}\n${lines}`;
-          })
-          .join('\n\n');
+          <p className="text-center text-gray-400">No expenses yet.</p>
+        ) : (
+              
+          <div className="mb-6 p-4 bg-yellow-50 rounded-md relative">
+            {Object.keys(groupedByDate).length > 0 && (
+  <button
+    onClick={() => {
+      const combined = Object.entries(groupedByDate)
+        .map(([date, exps]) => {
+          const lines = exps.map(
+            (exp) => `• ₹${exp.amount} ${exp.note || exp.category}`
+          ).join('\n');
+          return `${date}\n${lines}`;
+        })
+        .join('\n\n');
 
-        navigator.clipboard.writeText(combined);
-        setCopiedDate('ALL');
-        setTimeout(() => setCopiedDate(null), 2000);
-      }}
-      className="absolute top-4 right-4 text-sm text-blue-600 hover:text-blue-800 transition-transform active:scale-90"
-    >
-      {copiedDate === 'ALL' ? (
-        <div className="flex items-center gap-1 text-green-600">
-          <Check size={16} /> Copied!
-        </div>
-      ) : (
-        <Clipboard size={16} />
-      )}
-    </button>
-
-    {/* All grouped expenses shown below */}
-    {Object.entries(groupedByDate).map(([date, exps]) => (
-      <div key={date} className="mb-4">
-        <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
-        <ul className="space-y-3">
-          {exps.map((exp) => (
-            <li key={exp.id} className="p-3 bg-gray-100 rounded-md">
-              <div className="font-medium">₹{exp.amount}</div>
-              <div className="text-sm text-gray-600">{exp.category}</div>
-              {exp.note && (
-                <div className="text-xs text-gray-500 mt-1">{exp.note}</div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </div>
+      navigator.clipboard.writeText(combined);
+      setCopiedDate('ALL');
+      setTimeout(() => setCopiedDate(null), 2000);
+    }}
+    className={`mb-4 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-all duration-200
+      ${copiedDate === 'ALL'
+        ? 'bg-green-100 text-green-800 scale-95'
+        : 'bg-green-600 text-white hover:bg-green-700 active:scale-95'}`}
+  >
+    {copiedDate === 'ALL' ? (
+      <>
+        <span className="animate-pulse">✅ Copied!</span>
+      </>
+    ) : (
+      <>
+        📋 Copy All
+      </>
+    )}
+  </button>
 )}
 
+            {Object.entries(groupedByDate).map(([date, exps]) => (
+              <div key={date} className="mb-4">
+                <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
+                <ul className="space-y-3">
+                  {exps.map((exp) => (
+                    <li key={exp.id} className="p-3 bg-gray-100 rounded-md">
+                      <div className="font-medium">₹{exp.amount}</div>
+                      <div className="text-sm text-gray-600">{exp.category}</div>
+                      {exp.note && (
+                        <div className="text-xs text-gray-500 mt-1">{exp.note}</div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Voice Transcript UI */}
+        {transcript && (
+          <div className="mt-4 bg-gray-100 p-4 rounded-md">
+            <p className="italic text-gray-500 mb-1">Heard: “{transcript}”</p>
+            <p><strong>Amount:</strong> ₹{voiceExpense.amount}</p>
+            <p><strong>Category:</strong> {voiceExpense.category}</p>
+            <p><strong>Date:</strong> {voiceExpense.date}</p>
+            <div className="flex gap-3 mt-3">
+            <button
+              onClick={confirmVoiceExpense}
+              className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Confirm Expense
+            </button>
+            <button
+              onClick={() => {
+                setTranscript('');
+                setVoiceExpense({});
+              }}
+              className="text-sm text-gray-600 underline hover:text-gray-800"
+            >
+              Cancel
+            </button>
+        </div>
+
+          </div>
+        )}
       </section>
 
       {/* Floating Add Button */}
@@ -131,6 +237,16 @@ export default function Home() {
         +
       </button>
 
+      {/* Floating Mic Button */}
+      <button
+        onClick={startListening}
+        className="fixed bottom-6 right-24 bg-green-600 text-white w-14 h-14 rounded-full shadow-lg hover:bg-green-700 flex items-center justify-center transition-all duration-200"
+        aria-label="Voice add"
+      >
+        {listening ? <MicOff size={24} /> : <Mic size={24} />}
+      </button>
+
+      {/* Modal remains unchanged — can keep it here if needed */}
       {/* Add Expense Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-20">
@@ -152,6 +268,8 @@ export default function Home() {
                 const updated = [...expenses, newExpense];
                 setExpenses(updated);
                 localStorage.setItem('expenses', JSON.stringify(updated));
+                const audio = new Audio('/sounds/success.wav');
+                audio.play();
                 setShowAddModal(false);
                 form.reset();
               }}
