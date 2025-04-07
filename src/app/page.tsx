@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import { Mic, MicOff } from 'lucide-react';
