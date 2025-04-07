@@ -2,7 +2,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, Trash2 } from 'lucide-react';
 import * as chrono from 'chrono-node';
 
 type Expense = {
@@ -189,22 +189,37 @@ export default function Home() {
   </button>
 )}
 
-            {Object.entries(groupedByDate).map(([date, exps]) => (
-              <div key={date} className="mb-4">
-                <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
-                <ul className="space-y-3">
-                  {exps.map((exp) => (
-                    <li key={exp.id} className="p-3 bg-gray-100 rounded-md">
-                      <div className="font-medium">₹{exp.amount}</div>
-                      <div className="text-sm text-gray-600">{exp.category}</div>
-                      {exp.note && (
-                        <div className="text-xs text-gray-500 mt-1">{exp.note}</div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+{Object.entries(groupedByDate).map(([date, exps]) => (
+  <div key={date} className="mb-4">
+    <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
+    <ul className="space-y-3">
+      {exps.map((exp) => (
+        <li key={exp.id} className="p-3 bg-gray-100 rounded-md flex justify-between items-start">
+          <div>
+            <div className="font-medium">₹{exp.amount}</div>
+            <div className="text-sm text-gray-600">{exp.category}</div>
+            {exp.note && (
+              <div className="text-xs text-gray-500 mt-1">{exp.note}</div>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              if (confirm('Delete this expense?')) {
+                const updated = expenses.filter((e) => e.id !== exp.id);
+                setExpenses(updated);
+                localStorage.setItem('expenses', JSON.stringify(updated));
+              }
+            }}
+            className="text-red-500 hover:text-red-700 ml-4"
+            title="Delete"
+          >
+            <Trash2 size={18} />
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+))}
           </div>
         )}
 
