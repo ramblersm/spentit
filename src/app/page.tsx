@@ -129,6 +129,9 @@ export default function Home() {
       <Header />
 
       <section className="p-4">
+        <h4 className="text-sm font-medium text-gray-600 mb-1">
+        Select a date range to filter your expenses:
+        </h4>
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
             type="date"
@@ -152,7 +155,7 @@ export default function Home() {
         )}
 
         {Object.keys(groupedByDate).length === 0 ? (
-          <p className="text-center text-gray-400">No expenses yet.</p>
+          <p className="text-center text-gray-400">No expenses. Tap '+' below to add an expense.</p>
         ) : (
               
           <div className="mb-6 p-4 bg-yellow-50 rounded-md relative">
