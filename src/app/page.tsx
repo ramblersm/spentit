@@ -164,10 +164,17 @@ export default function Home() {
     onClick={() => {
       const combined = Object.entries(groupedByDate)
         .map(([date, exps]) => {
+          const readableDate = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }).format(new Date(date))
+      
           const lines = exps.map(
             (exp) => `• ₹${exp.amount} ${exp.note || exp.category}`
           ).join('\n');
-          return `${date}\n${lines}`;
+      
+          return `${readableDate}\n${lines}`;
         })
         .join('\n\n');
 
@@ -194,7 +201,14 @@ export default function Home() {
 
 {Object.entries(groupedByDate).map(([date, exps]) => (
   <div key={date} className="mb-4">
-    <h3 className="text-md font-semibold text-gray-700 mb-2">{date}</h3>
+    <h3 className="text-md font-semibold text-gray-700 mb-2">
+  {new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(date))}
+</h3>
+
     <ul className="space-y-3">
       {exps.map((exp) => (
         <li key={exp.id} className="p-3 bg-gray-100 rounded-md flex justify-between items-start">
