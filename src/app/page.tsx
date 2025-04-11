@@ -57,7 +57,7 @@ export default function Home() {
         ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
       if (!isSupported) {
-        alert("Voice input isn’t supported on this device yet. Works best on Chrome/Android.");
+        alert("Voice input not supported on this device yet. Works best on Chrome/Android.");
         return;
       }
 
