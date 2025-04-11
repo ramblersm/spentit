@@ -15,27 +15,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SpentIt 💸",
   description: "Track your weekly spending effortlessly",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  manifest: '/manifest.json',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>SpentIt 💸</title>
-        <link rel="icon" href="/favicon.ico" />
+         {/* PWA Meta Tags */}
+         <meta name="theme-color" content="#ffffff" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
 
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body>
         {children}
       </body>
     </html>
