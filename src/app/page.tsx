@@ -155,7 +155,7 @@ export default function Home() {
         )}
 
         {Object.keys(groupedByDate).length === 0 ? (
-          <p className="text-center text-gray-400">No expenses. Tap '+' below to add an expense.</p>
+          <p className="text-center text-gray-400">No expenses. Tap &apos;+&apos; below to add an expense.</p>
         ) : (
               
           <div className="mb-6 p-4 bg-yellow-50 rounded-md relative">
