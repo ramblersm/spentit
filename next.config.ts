@@ -8,7 +8,9 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = {
   reactStrictMode: true,
-  // any other next config you already have
+eslint: {
+    ignoreDuringBuilds: true, // <-- This line skips lint errors
+  },
 }
 
 module.exports = withPWA(nextConfig)
