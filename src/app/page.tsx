@@ -30,12 +30,18 @@ export default function Home() {
   const [voiceExpense, setVoiceExpense] = useState<Partial<Expense>>({});
   const [copiedDate, setCopiedDate] = useState<string | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('expenses');
-    if (saved) {
-      setExpenses(JSON.parse(saved));
-    }
-  }, []);
+useEffect(() => {
+  const saved = localStorage.getItem('expenses');
+  if (saved) {
+    setExpenses(JSON.parse(saved));
+  }
+
+  // Set today's date if not already set
+  const today = new Date().toISOString().split('T')[0];
+  setStartDate(today);
+  setEndDate(today);
+}, []);
+
 
   const filteredExpenses = expenses.filter((exp) => {
     if (!startDate || !endDate) return true;
