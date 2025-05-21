@@ -23,16 +23,19 @@ export default function Home() {
   const [endDate, setEndDate] = useState('');
   const [copiedDate, setCopiedDate] = useState<string | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('expenses');
-    if (saved) {
-      setExpenses(JSON.parse(saved));
-    }
-  
-    const today = getTodayDate();
-    setStartDate(today);
-    setEndDate(today);
-  }, []);
+useEffect(() => {
+  const saved = localStorage.getItem('expenses');
+  if (saved) {
+    setExpenses(JSON.parse(saved));
+  }
+
+  const today = getTodayDate();
+
+  // Only set date if not already set (prevent overwrite on re-renders)
+  setStartDate((prev) => (prev ? prev : today));
+  setEndDate((prev) => (prev ? prev : today));
+}, []);
+
 
   const filteredExpenses = expenses.filter((exp) => {
     if (!startDate || !endDate) return true;
