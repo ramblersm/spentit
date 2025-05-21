@@ -11,6 +11,11 @@ type Expense = {
   date: string;
 };
 
+const getTodayDate = () => {
+  return new Date().toISOString().split('T')[0];
+};
+
+
 export default function Home() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -23,6 +28,10 @@ export default function Home() {
     if (saved) {
       setExpenses(JSON.parse(saved));
     }
+  
+    const today = getTodayDate();
+    setStartDate(today);
+    setEndDate(today);
   }, []);
 
   const filteredExpenses = expenses.filter((exp) => {
