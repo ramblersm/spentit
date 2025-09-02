@@ -319,7 +319,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-        )}*/
+        )}*/ 
       </section>
 
       {/* Floating Add Button */}
@@ -473,4 +473,3 @@ export default function Home() {
       )}
     </main>
   );
-}
