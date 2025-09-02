@@ -21,6 +21,7 @@ export default function CategoryChips({ value, onChange, className }: Props) {
           return (
             <button
               key={c.id}
+              type ="button"
               role="radio"
               aria-checked={selected}
               onClick={() => onChange(c.id)}
