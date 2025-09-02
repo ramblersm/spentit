@@ -27,7 +27,7 @@ export default function CategoryChips({ value, onChange, className }: Props) {
          // CategoryChips.tsx  → inside map() button className
 className={[
   "shrink-0 inline-flex items-center gap-2",
-  "px-4 py-3 rounded-full border text-base min-h-11",
+  "px-4 py-3 rounded-full border text-base",
   "bg-white text-gray-800 border-gray-200",
   "dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
   "transition-colors active:scale-95",
@@ -36,7 +36,7 @@ className={[
     : "hover:bg-gray-50 dark:hover:bg-zinc-800",
 ].join(" ")}
             >
-              <span className="text-lg">{c.icon}</span>
+              <span className="text-base">{c.icon}</span>
               <span>{c.label}</span>
             </button>
           );
