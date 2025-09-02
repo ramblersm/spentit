@@ -338,22 +338,23 @@ export default function Home() {
                 />
               </div>
 
-              {/* Actions */}
-              <div className="flex justify-end gap-2 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="text-sm text-gray-500 hover:underline"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 active:scale-95 transition"
-                >
-                  Save
-                </button>
-              </div>
+              {/* Actions: primary + text link */}
+<div className="mt-4 flex items-center justify-between">
+  <button
+    type="button"
+    onClick={() => setShowAddModal(false)}
+    className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-2"
+  >
+    Cancel
+  </button>
+  <button
+    type="submit"
+    className="h-11 px-5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 active:scale-95 transition"
+  >
+    Save
+  </button>
+</div>
+
             </form>
           </div>
         </div>
