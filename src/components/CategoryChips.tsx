@@ -25,13 +25,15 @@ export default function CategoryChips({ value, onChange, className }: Props) {
               aria-checked={selected}
               onClick={() => onChange(c.id)}
               className={[
-                "shrink-0 inline-flex items-center gap-2",
-                "px-4 py-3 rounded-full border text-base min-h-11", // thumb-friendly
-                "transition-transform active:scale-95",
+              "shrink-0 inline-flex items-center gap-2",
+              "px-4 py-3 rounded-full border text-base min-h-11",
+              "transition-transform active:scale-95",
                 selected
-                  ? "bg-indigo-600 text-white border-indigo-600"
-                  : "bg-white text-gray-800 border-gray-200 dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
-              ].join(" ")}
+                    // Selected: a bit deeper green, still soft
+                    ? "bg-emerald-200 text-emerald-900 border-emerald-300"
+                    // Unselected: very light green background, darker green text
+                    : "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800",
+                  ].join(" ")}
             >
               <span className="text-lg">{c.icon}</span>
               <span>{c.label}</span>
