@@ -10,36 +10,38 @@ type Props = {
 export default function CategoryChips({ value, onChange, className }: Props) {
   return (
     <div className={className}>
-      {/* Scrollable row of chips */}
       <div
         role="radiogroup"
         aria-label="Category"
-        className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 pb-1"
+        className="
+          flex items-center gap-2
+          overflow-x-auto whitespace-nowrap
+          touch-pan-x
+          -mx-1 px-1 py-1
+          [&::-webkit-scrollbar]:hidden
+          [-ms-overflow-style:'none']
+          [scrollbar-width:'none']
+        "
       >
         {CATEGORIES.map((c) => {
           const selected = c.id === value;
           return (
             <button
               key={c.id}
-              type ="button"
+              type="button" // important so it doesn't submit the form
               role="radio"
               aria-checked={selected}
               onClick={() => onChange(c.id)}
-         // CategoryChips.tsx  → inside map() button className
-// CategoryChips.tsx  → inside map() button className
-className={[
-  "shrink-0 inline-flex items-center gap-2",
-  "px-4 py-3 rounded-full border text-base ",
-  "bg-white text-gray-800 border-gray-200",
-  "dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
-  "transition-colors active:scale-95",
-  selected
-    ? "border-emerald-500 ring-2 ring-emerald-200/60 dark:ring-emerald-400/30"
-    : "hover:bg-gray-50 dark:hover:bg-zinc-800",
-].join(" ")}
-
+              className={[
+                "flex-none inline-flex items-center gap-1.5",
+                "px-3 py-2 rounded-full border text-sm min-h-10",
+                "transition-colors active:scale-95",
+                selected
+                  ? "bg-emerald-600 text-white border-emerald-700"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200",
+              ].join(" ")}
             >
-              <span className="text-base">{c.icon}</span>
+              <span className="text-sm">{c.icon}</span>
               <span>{c.label}</span>
             </button>
           );
@@ -48,8 +50,3 @@ className={[
     </div>
   );
 }
-
-/* Optional global CSS to hide scrollbars on mobile:
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-*/
