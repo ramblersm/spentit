@@ -24,17 +24,17 @@ export default function CategoryChips({ value, onChange, className }: Props) {
               role="radio"
               aria-checked={selected}
               onClick={() => onChange(c.id)}
-          className={[
+         // CategoryChips.tsx  → inside map() button className
+className={[
   "shrink-0 inline-flex items-center gap-2",
   "px-4 py-3 rounded-full border text-base min-h-11",
-  "bg-transparent text-gray-800 border-gray-300",
-  "dark:text-zinc-100 dark:border-zinc-700",
+  "bg-white text-gray-800 border-gray-200",
+  "dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
   "transition-colors active:scale-95",
   selected
-    ? "border-emerald-500 text-emerald-700 dark:text-emerald-300"
-    : "hover:border-gray-400 dark:hover:border-zinc-600",
+    ? "border-emerald-500 ring-2 ring-emerald-200/60 dark:ring-emerald-400/30"
+    : "hover:bg-gray-50 dark:hover:bg-zinc-800",
 ].join(" ")}
-
             >
               <span className="text-lg">{c.icon}</span>
               <span>{c.label}</span>
