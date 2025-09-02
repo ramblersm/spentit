@@ -32,7 +32,7 @@ className={[
   "dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
   "transition-colors active:scale-95",
   selected
-    ? "border-emerald-500 ring-2 ring-emerald-200/60 dark:ring-emerald-400/30"
+    ? "bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-900/15 dark:text-emerald-200 dark:border-emerald-800"
     : "hover:bg-gray-50 dark:hover:bg-zinc-800",
 ].join(" ")}
             >
