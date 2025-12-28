@@ -23,7 +23,12 @@ export default function Home() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
+  const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+  });
   const [copiedDate, setCopiedDate] = useState<string | null>(null);
   const [modalCategory, setModalCategory] = useState<CategoryId | null>(null);
 
@@ -73,7 +78,7 @@ export default function Home() {
 
       <section className="p-4">
         <h4 className="text-sm font-medium text-gray-600 mb-1">
-          Select a date range to filter your expenses:
+          Filter your spends by date:
         </h4>
 
         {/* date range controls */}
@@ -92,13 +97,23 @@ export default function Home() {
           />
         </div>
 
-        {startDate && endDate && (
+      {startDate && endDate && (
           <div className="mb-4 text-sm text-gray-700">
-            Showing expenses from <strong>{startDate}</strong> to{" "}
-            <strong>{endDate}</strong>
-            <div className="text-md font-semibold mt-1">Total: ₹{totalInRange}</div>
+            {startDate === endDate ? (
+              <>Your spends on <strong>{formatDate(startDate)}</strong></>
+            ) : (
+              <>
+                Your spends from <strong>{formatDate(startDate)}</strong> to{" "}
+                <strong>{formatDate(endDate)}</strong>
+              </>
+            )}
+            <div className="text-md font-semibold mt-1">
+              Total: ₹{totalInRange}
+            </div>
           </div>
         )}
+
+
 
         {/* list / empty state */}
         {Object.keys(groupedByDate).length === 0 ? (
