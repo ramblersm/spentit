@@ -108,7 +108,7 @@ export default function Home() {
               </>
             )}
             <div className="text-md font-semibold mt-1">
-              Total: ₹{totalInRange}
+              Total Spent: ₹{totalInRange}
             </div>
           </div>
         )}
