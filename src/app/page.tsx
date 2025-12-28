@@ -56,14 +56,10 @@ export default function Home() {
     if (modalCategory) localStorage.setItem(LAST_CAT_KEY, modalCategory);
   }, [modalCategory]);
 
-  useEffect(() => {
-  if (!startDate || !endDate) return;
-
+  const triggerSummaryAnimation = () => {
   setAnimateSummary(true);
-  const t = setTimeout(() => setAnimateSummary(false), 200);
-
-  return () => clearTimeout(t);
-}, [startDate, endDate]);
+  setTimeout(() => setAnimateSummary(false), 250);
+};
 
 
   
@@ -100,12 +96,14 @@ export default function Home() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            onBlur={triggerSummaryAnimation}
             className="p-2 border rounded-md text-sm"
           />
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            onBlur={triggerSummaryAnimation}
             className="p-2 border rounded-md text-sm"
           />
         </div>
