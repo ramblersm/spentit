@@ -32,6 +32,8 @@ export default function Home() {
   const [copiedDate, setCopiedDate] = useState<string | null>(null);
   const [modalCategory, setModalCategory] = useState<CategoryId | null>(null);
 
+  const [animateSummary, setAnimateSummary] = useState(false);
+
   // boot
   useEffect(() => {
     const saved = localStorage.getItem("expenses");
@@ -54,6 +56,17 @@ export default function Home() {
     if (modalCategory) localStorage.setItem(LAST_CAT_KEY, modalCategory);
   }, [modalCategory]);
 
+  useEffect(() => {
+  if (!startDate || !endDate) return;
+
+  setAnimateSummary(true);
+  const t = setTimeout(() => setAnimateSummary(false), 200);
+
+  return () => clearTimeout(t);
+}, [startDate, endDate]);
+
+
+  
   // filters
   const filteredExpenses = expenses.filter((exp) => {
     if (!startDate || !endDate) return true;
@@ -97,18 +110,17 @@ export default function Home() {
           />
         </div>
 
-      {startDate && endDate && (
-          <div className="mb-4 text-sm text-gray-700">
-            {startDate === endDate ? (
-              <>Your spends on <strong>{formatDate(startDate)}</strong></>
-            ) : (
-              <>
-                Your spends from <strong>{formatDate(startDate)}</strong> to{" "}
-                <strong>{formatDate(endDate)}</strong>
-              </>
-            )}
+     {startDate && endDate && (
+          <div
+            className={`mb-4 text-sm text-gray-700 transition-opacity duration-200
+              ${animateSummary ? 'opacity-60' : 'opacity-100'}
+            `}
+          >
+            Your spends from{" "}
+            <strong>{formatDate(startDate)}</strong> to{" "}
+            <strong>{formatDate(endDate)}</strong>
             <div className="text-md font-semibold mt-1">
-              Total Spent: ₹{totalInRange}
+              Total: ₹{totalInRange}
             </div>
           </div>
         )}
